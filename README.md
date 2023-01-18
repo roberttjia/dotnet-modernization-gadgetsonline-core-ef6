@@ -1,11 +1,18 @@
-## My Project
+# GadgetsOnline-DotNet
+A sample online shopping app on .NET 6.
 
-TODO: Fill this README out!
+1. Update connection string GadgetsOnlineEntities in appsettings.json.
+2. Run the application using Visual Studio or dotnet CLI.
 
-Be sure to:
+# Pre-Requisites 
 
-* Change the title in this README
-* Edit your repository description on GitHub
+
+1. Visual Studio 2019 16.4 or later 
+2. Full .NET 6.0    
+3. SQL Server Management Studio
+4. MS SQL Server (LocalDB version is perfectly suitable with appropriate connection string adjustments).
+5. Git for Windows.
+
 
 ## Security
 
