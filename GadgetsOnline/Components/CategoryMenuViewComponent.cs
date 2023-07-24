@@ -15,8 +15,12 @@ namespace GadgetsOnline.Components
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var categories = _inventory.GetAllCategories();
-            return View(categories);
+            return await Task.Run(() =>
+            {
+                var categories = _inventory.GetAllCategories();
+                return View(categories);
+
+            });
         }
     }
 }
