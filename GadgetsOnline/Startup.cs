@@ -1,20 +1,13 @@
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Threading.Tasks;
 using GadgetsOnline.Models;
 using GadgetsOnline.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using System.Data.Entity;
 
 namespace GadgetsOnline
 {
@@ -40,17 +33,10 @@ namespace GadgetsOnline
             });
 
             services.AddControllersWithViews();
-            services.AddDbContext<GadgetsOnlineEntities>(opt =>
-            {
-                opt.UseSqlServer(Configuration.GetConnectionString(nameof(GadgetsOnlineEntities)));
-            });
+            services.AddScoped<GadgetsOnlineEntities>(provider =>
+                new GadgetsOnlineEntities(Configuration.GetConnectionString(nameof(GadgetsOnlineEntities))));
 
-            // seed data
-            using (var context = new GadgetsOnlineEntities(Configuration.GetConnectionString(nameof(GadgetsOnlineEntities))))
-            {
-                context.Database.EnsureCreated();
-                context.SaveChanges();
-            }
+            Database.SetInitializer(new GadgetsOnlineInitializer());
 
             services.AddScoped<IInventory, Inventory>();
             services.AddScoped<IShoppingCart, ShoppingCart>();
@@ -61,6 +47,13 @@ namespace GadgetsOnline
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            // Initialize EF6 database on startup
+            using (var context = new GadgetsOnlineEntities(Configuration.GetConnectionString(nameof(GadgetsOnlineEntities))))
+            {
+                // This will trigger the initializer if needed
+                context.Database.Initialize(force: false);
+            }
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
